@@ -1,0 +1,47 @@
+Explain what the following code is attempting to do? You can explain by:
+Explaining how the highlighted constructs work?
+Giving use-cases of what these constructs could be used for.
+What is the significance of the for loop with 4 iterations?
+What is the significance of make(chan func(), 10)?
+Why is “HERE1” not getting printed?
+
+package main
+
+import "fmt"
+
+func main() {
+    cnp := make(chan func(), 10)
+    for i := 0; i < 4; i++ {
+        go func() {
+            for f := range cnp {
+                f()
+            }
+        }()
+    }
+    cnp <- func() {
+        fmt.Println("HERE1")
+    }
+    fmt.Println("Hello")
+}
+
+1. Here this example is demonstrating how to properly coordinate goroutines 
+   and manage concurrent tasks using channels in Go.
+
+2. Firstly we create a buffered channel cnp that can hold up to 10 function values.
+   Then we have a loop which iterates 4 times, each iteration launching a new goroutine. 
+   The range over the channel keeps the goroutine running until the channel is closed.
+   Next we have a line that sends a function (that prints "HERE1") into the cnp channel.
+   Since the channel is buffered,it can hold the function until one of the goroutines retrieves and executes it.
+   Finally, we have the main function print statement "Hello".
+
+ 3. These constructs can be used for showing the working of the"Concurrency" model in Golang.
+
+ 4. Here the for loop with 4 iterations is used to show how we launch 4 goroutines to do different tasks concurrently.
+
+ 5. make(chan func(), 10)
+    This creates a buffered channel with capacity 10, allowing up to 10 function values to be sent without blocking.
+
+ 6. The reason "HERE1" is not getting printed is due to the program terminating before the goroutines have a chance to execute the function.
+    The main function sends a function to the channel and immediately prints "Hello" before exiting.
+    When the main function exits, the program terminates, potentially before the goroutines have processed the function from the channel. 
+    
